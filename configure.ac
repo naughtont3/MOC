@@ -51,7 +51,7 @@ else
 fi
 
 CPPFLAGS_save="$CPPFLAGS"
-AC_SUBST([CPPFLAGS],["$MPI_INC $CPPFLAGS_save -std=c99"])
+AC_SUBST([CPPFLAGS],["$MPI_INC $CPPFLAGS_save -std=c99 -lmpi"])
 AC_SUBST([LIBS],["$MPI_LIB $LIBS_save"])
 AC_CHECK_HEADERS([mpi.h],[AC_DEFINE(HAVE_MPI)],[AC_MSG_ERROR([Cannot find MPI])])
 
@@ -75,7 +75,7 @@ else
 fi
 
 CPPFLAGS_save="$CPPFLAGS"
-AC_SUBST([CPPFLAGS],["$PMIX_INC $CPPFLAGS_save -std=c99"])
+AC_SUBST([CPPFLAGS],["$PMIX_INC $CPPFLAGS_save -std=c99 -lpmix"])
 AC_SUBST([LIBS],["$PMIX_LIB $LIBS_save"])
 AC_CHECK_HEADERS([pmix.h],[AC_DEFINE(HAVE_PMIX)],[AC_MSG_ERROR([Cannot find PMIX])])
 
