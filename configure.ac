@@ -29,7 +29,7 @@ LT_INIT
 CPPFLAGS_save="$CPPFLAGS"
 LIBS_save="$LIBS"
 top_srcdir=`pwd`
-AC_SUBST([CPPFLAGS],["-I$top_srcdir/include $CPPFLAGS_save -std=c99"])
+AC_SUBST([CPPFLAGS],["-I$top_srcdir/include $CPPFLAGS_save"])
 
 dnl# mpi
 
@@ -51,9 +51,11 @@ else
 fi
 
 CPPFLAGS_save="$CPPFLAGS"
-AC_SUBST([CPPFLAGS],["$MPI_INC $CPPFLAGS_save -std=c99"])
-AC_SUBST([LIBS],["$MPI_LIB $LIBS_save"])
+LIBS_save="$LIBS"
+AC_SUBST([CPPFLAGS],["$MPI_INC $CPPFLAGS_save"])
+AC_SUBST([LIBS],["$MPI_LIB $LIBS_save -lmpi"])
 AC_CHECK_HEADERS([mpi.h],[AC_DEFINE(HAVE_MPI)],[AC_MSG_ERROR([Cannot find MPI])])
+AC_CHECK_LIB([mpi], [MPI_Init],,AC_MSG_ERROR([Cannot use MPI lib]))
 
 dnl# pmix
 
@@ -75,9 +77,11 @@ else
 fi
 
 CPPFLAGS_save="$CPPFLAGS"
+LIBS_save="$LIBS"
 AC_SUBST([CPPFLAGS],["$PMIX_INC $CPPFLAGS_save -std=c99"])
-AC_SUBST([LIBS],["$PMIX_LIB $LIBS_save"])
+AC_SUBST([LIBS],["$PMIX_LIB $LIBS_save -lpmix"])
 AC_CHECK_HEADERS([pmix.h],[AC_DEFINE(HAVE_PMIX)],[AC_MSG_ERROR([Cannot find PMIX])])
+AC_CHECK_LIB([pmix], [PMIx_Init],,AC_MSG_ERROR([Cannot use PMIx lib]))
 
 AC_CONFIG_FILES([Makefile include/Makefile src/Makefile test/Makefile])
 AC_OUTPUT
