@@ -170,7 +170,7 @@ MOC_Init (MPI_Comm comm)
 				/* End of this rank placement set of cores */
 				my_finish_place = ((_local_place_offset * stride) + stride) - 1;
 
-				//fprintf (stderr, "[%s:%s:%d] OMP-RT %d  start: %d  finish: %d stride: %d\n",
+				//fprintf (stderr, "[%s:%s:%d] MOC: %d  start: %d  finish: %d stride: %d\n",
 				//           __FILE__, __func__, __LINE__, _local_myrank,
 				//           my_start_place, my_finish_place, stride);
 
@@ -189,16 +189,16 @@ MOC_Init (MPI_Comm comm)
 				/* Set rank specific places (avoid override if OMP_PLACES already defined) */
 				if (NULL != getenv("OMP_PLACES"))
 				{
-					fprintf (stderr, "[%s:%s:%d] OMP-RT (pid:%d) Rank: %d OMP_PLACES ALREADY SET\n", __FILE__, __func__, __LINE__, (int)getpid(), _local_myrank);
+					fprintf (stderr, "[%s:%s:%d] MOC: (pid:%d) Rank: %d OMP_PLACES ALREADY SET\n", __FILE__, __func__, __LINE__, (int)getpid(), _local_myrank);
 				}
 				else
 				{
-					fprintf (stderr, "[%s:%s:%d] OMP-RT (pid:%d) Rank: %d OVERRIDE OMP_PLACES INFO (%s)\n", __FILE__, __func__, __LINE__, (int)getpid(), _local_myrank, tmp_str);
+					fprintf (stderr, "[%s:%s:%d] MOC: (pid:%d) Rank: %d OVERRIDE OMP_PLACES INFO (%s)\n", __FILE__, __func__, __LINE__, (int)getpid(), _local_myrank, tmp_str);
 					setenv("OMP_PLACES", tmp_str, 1);
 				}
 			  #endif
 
-				fprintf (stderr, "[%s:%s:%d] OMP-RT (pid:%d) Rank: %d  places: %s\n", __FILE__, __func__, __LINE__, (int)getpid(), _local_myrank, tmp_str);
+				fprintf (stderr, "[%s:%s:%d] MOC: (pid:%d) Rank: %d  places: %s\n", __FILE__, __func__, __LINE__, (int)getpid(), _local_myrank, tmp_str);
 
 				if (NULL != tmp_str)
 					free(tmp_str);
