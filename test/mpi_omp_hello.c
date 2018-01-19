@@ -9,6 +9,7 @@
 *   thread's number.
 * AUTHORS: Blaise Barney  5/99 (for the OpenMP part)
 *          Geoffroy Vallee (for the MPI+OpenMP aspects)
+* COPYRIGHT: 2017-2018. UT-Battelle, LLC. All rights reserved.
 ******************************************************************************/
 #include <omp.h>
 #include <stdio.h>
