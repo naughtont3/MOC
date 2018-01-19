@@ -19,7 +19,7 @@ AC_CONFIG_MACRO_DIR([m4])
 
 CFLAGS="$CFLAGS -std=c99"
 
-AC_PROG_CC
+AC_PROG_CC([clang gcc])
 AC_PROG_INSTALL
 AC_PROG_MKDIR_P
 AM_PROG_CC_C_O
@@ -82,6 +82,9 @@ AC_SUBST([CPPFLAGS],["$PMIX_INC $CPPFLAGS_save -std=c99"])
 AC_SUBST([LIBS],["$PMIX_LIB $LIBS_save -lpmix"])
 AC_CHECK_HEADERS([pmix.h],[AC_DEFINE(HAVE_PMIX)],[AC_MSG_ERROR([Cannot find PMIX])])
 AC_CHECK_LIB([pmix], [PMIx_Init],,AC_MSG_ERROR([Cannot use PMIx lib]))
+
+AM_CONDITIONAL(USE_CLANG, test "x$CC" = "xclang")
+AM_CONDITIONAL(USE_CC, test "x$CC" = "xgcc")
 
 AC_CONFIG_FILES([Makefile include/Makefile src/Makefile test/Makefile])
 AC_OUTPUT
