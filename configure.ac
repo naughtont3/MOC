@@ -83,5 +83,22 @@ AC_SUBST([LIBS],["$PMIX_LIB $LIBS_save -lpmix"])
 AC_CHECK_HEADERS([pmix.h],[AC_DEFINE(HAVE_PMIX)],[AC_MSG_ERROR([Cannot find PMIX])])
 AC_CHECK_LIB([pmix], [PMIx_Init],,AC_MSG_ERROR([Cannot use PMIx lib]))
 
+dnl# Static vs. dynamic mode
+
+COORD_MODE="static"
+AC_ARG_ENABLE([dynamic-coord],
+              [AS_HELP_STRING([--enable-dynamic-coord],
+                              [Switch the MOC library to dynamic mode, allowing the coordination of Open MPI and a compatible modified version of LLVM])],
+              [case "${enableval}" in
+                yes) coord_mode="dynamic" ;;
+                no)  coord_mode="static" ;;
+                *) AC_MSG_ERROR([Bad value ${enableval} for --enable-dynamic-coord]) ;;
+               esac],[coord_mode="static"])
+if test "x$coord_mode" = "xstatic" ; then
+    AC_DEFINE([STATIC_COORD])
+else
+    AC_DEFINE([DYNAMIC_COORD])
+fi
+
 AC_CONFIG_FILES([Makefile include/Makefile src/Makefile test/Makefile])
 AC_OUTPUT
