@@ -85,7 +85,6 @@ AC_CHECK_LIB([pmix], [PMIx_Init],,AC_MSG_ERROR([Cannot use PMIx lib]))
 
 dnl# Static vs. dynamic mode
 
-COORD_MODE="static"
 AC_ARG_ENABLE([dynamic-coord],
               [AS_HELP_STRING([--enable-dynamic-coord],
                               [Switch the MOC library to dynamic mode, allowing the coordination of Open MPI and a compatible modified version of LLVM])],
