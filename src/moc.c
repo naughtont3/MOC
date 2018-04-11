@@ -1,3 +1,13 @@
+/*
+ * Copyright 2017-2018   UT-Battelle, LLC.
+ *                       All rights reserved.
+ * See COPYING in top-level directory.
+ * 
+ * Additional copyrights may follow
+ * 
+ * $HEADER$
+ */
+
 #define _GNU_SOURCE
 
 #include <pmix.h>
