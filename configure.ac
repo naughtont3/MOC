@@ -1,6 +1,6 @@
 # -*- shell-script -*-
 #
-# Copyright 2017        UT-Battelle, LLC.
+# Copyright 2017-2018   UT-Battelle, LLC.
 #                       All rights reserved.
 # See COPYING in top-level directory.
 # 
@@ -19,7 +19,7 @@ AC_CONFIG_MACRO_DIR([m4])
 
 CFLAGS="$CFLAGS -std=c99"
 
-AC_PROG_CC
+AC_PROG_CC([clang gcc])
 AC_PROG_INSTALL
 AC_PROG_MKDIR_P
 AM_PROG_CC_C_O
@@ -98,6 +98,9 @@ if test "x$coord_mode" = "xstatic" ; then
 else
     AC_DEFINE([DYNAMIC_COORD])
 fi
+
+AM_CONDITIONAL(USE_CLANG, test "x$CC" = "xclang")
+AM_CONDITIONAL(USE_CC, test "x$CC" = "xgcc")
 
 AC_CONFIG_FILES([Makefile include/Makefile src/Makefile test/Makefile])
 AC_OUTPUT
