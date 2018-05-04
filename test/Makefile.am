@@ -11,7 +11,9 @@
 
 bin_PROGRAMS = simple_test
 
-check_PROGRAMS = hello-omp
+check_PROGRAMS = 	\
+	hello-omp 		\
+	tst-thrdbind
 
 TESTS = \
 	$(check_PROGRAMS)
@@ -25,3 +27,6 @@ simple_test_LDADD = ../src/libmoc.la
 hello_omp_SOURCES = hello-omp.c
 hello_omp_LDFLAGS = -fopenmp
 hello_omp_LDADD   = 
+
+tst_thrdbind_SOURCES = tst-thrdbind.c
+tst_thrdbind_LDADD   = -lpthread
