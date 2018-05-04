@@ -83,5 +83,7 @@ AC_SUBST([LIBS],["$PMIX_LIB $LIBS_save -lpmix"])
 AC_CHECK_HEADERS([pmix.h],[AC_DEFINE(HAVE_PMIX)],[AC_MSG_ERROR([Cannot find PMIX])])
 AC_CHECK_LIB([pmix], [PMIx_Init],,AC_MSG_ERROR([Cannot use PMIx lib]))
 
+m4_include([test/moc_tests.m4])
+
 AC_CONFIG_FILES([Makefile include/Makefile src/Makefile test/Makefile])
 AC_OUTPUT

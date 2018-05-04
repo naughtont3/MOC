@@ -1,0 +1,55 @@
+#!/bin/sh
+#
+# NOTE: Creating a stand-alone script that we will use as the wrapper
+#       script for running the tests.  This way it is easier to make
+#       local changes without having to rebuild/reinstall tests.
+#       This allows us to interpose on the launch to add additional
+#       flags (e.g., MCA params) or simply print Verbose output.
+#
+# INPUTS: The Number of Procs (-np X) and Executable are passed to this
+#       script from the build system (e.g., during `make check`).
+#
+#       You can add additional site customizations to the RUNNER
+#       to simplify the running of tests, e.g., MCA params, etc.
+#
+# NOTE: This defaults to 'orterun' and assumes it is in the path.
+#
+# USAGE:
+#       # Direct invocation
+#      ./test-runner  -np 2 /bin/hostname
+#      ./test-runner  -np 4 /bin/hostname
+#
+#       # Indirect invocation via Automake Tests
+#      make check
+#      make NPROCS=4 check
+#
+
+VERBOSE=1
+
+#NPROCS=${NPROCS:-2}
+#RUNNER="orterun -np $NPROCS"
+
+RUNNER="orterun"
+
+if [ "$VERBOSE" = "1" ] ; then
+    echo "# Run via test wrapper 'test/test-runner'"
+
+    echo "####################################################################"
+    echo "#"
+    echo "# CMD: $RUNNER $@"
+    echo "#"
+    echo "####################################################################"
+    echo ""
+fi
+
+$RUNNER $@
+rc=$?
+
+if [ "$VERBOSE" = "1" ] ; then
+    echo ""
+    echo "####################################################################"
+    echo "# RETVAL: $rc"
+    echo "####################################################################"
+fi
+
+exit $rc
