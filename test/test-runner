@@ -30,6 +30,7 @@ VERBOSE=1
 #RUNNER="orterun -np $NPROCS"
 
 RUNNER="orterun"
+#RUNNER="orterun --report-bindings --map-by node --bind-to core "
 
 if [ "$VERBOSE" = "1" ] ; then
     echo "# Run via test wrapper 'test/test-runner'"

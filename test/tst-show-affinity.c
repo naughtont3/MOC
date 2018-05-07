@@ -1,7 +1,8 @@
 /*
- * Note: Use 'OMP_NUM_THREADS' to limit number of threads executing,
- *       (e.g., env OMP_NUM_THREADS=16 ./hello-omp_llvm )
- *
+ * OpenMP Notes
+ *  - 'OMP_NUM_THREADS=<x>' to limit number of threads executing
+ *  - 'OMP_PROC_BIND=true'  to enable OpenMP binding
+ *  - 'OMP_PLACES=<loc>'    to set places where thread may execute
  */
 
 #define _GNU_SOURCE
@@ -18,7 +19,24 @@
 #include <omp.h>
 
 
+/*
+ * Global Variables
+ */
 
+int     VERBOSE = 0;
+int     HELP    = 0;
+
+
+/*
+ * Prototypes
+ */
+void usage(char *);
+int cpuaff2str(cpu_set_t , char **);
+
+
+/*
+ * Functions
+ */
 void usage(char *exe_name)
 {
     printf("Usage: %s  [OPTIONS]\n", exe_name);
@@ -29,10 +47,6 @@ void usage(char *exe_name)
 }
 
 
-/*
- * Ref:
- * https://stackoverflow.com/questions/10490756/how-to-use-sched-getaffinity-and-sched-setaffinity-in-linux-from-c?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
- */
 int cpuaff2str(cpu_set_t mask, char **str)
 {
     int i;
@@ -53,13 +67,6 @@ int cpuaff2str(cpu_set_t mask, char **str)
     return (0);
 }
 
-/* 
- * Global Variables 
- */
-
-int     VERBOSE = 0;
-int     HELP    = 0;
-
 int main (int argc, char ** argv)
 {
     int         i;
@@ -69,6 +76,10 @@ int main (int argc, char ** argv)
     int         rank = 0;
     int         size = 0;
     int         opt;
+    cpu_set_t   proc_cpuset;
+    cpu_set_t   *proc_cpusetp;
+    char        *proc_str = NULL;
+    int         proc_cpucount = 0;
 
     opterr = 1;
     while ((opt = getopt(argc, argv, "vh")) != -1) {
@@ -120,12 +131,10 @@ int main (int argc, char ** argv)
 
     /* Get Process CPU binding (affinity) */
     /* NOTE: If pid=0, return mask of calling process */
-    //sched_getaffinity(0, sizeof(proc_cpuset), &proc_cpuset);
-    //proc_cpucount = CPU_COUNT(&proc_cpuset);
+    sched_getaffinity(0, sizeof(proc_cpuset), &proc_cpuset);
+    proc_cpucount = CPU_COUNT(&proc_cpuset);
+    cpuaff2str(proc_cpuset, &proc_str);
 
-    /* Get Thread CPU binding (affinity) */
-    //sched_getaffinity(mytid, sizeof(cpuset), &cpuset);
-    //pthread_getaffinity_np(thread, sizeof(cpuset), &cpuset);
 
 
 #pragma omp parallel private(omp_tid)
@@ -143,21 +152,24 @@ int main (int argc, char ** argv)
     /* Get (system) Thread ID */
     tid = syscall(SYS_gettid);
 
-    //thread = pthread_self();
+    /* Get Thread CPU binding (affinity) */
+    /*
+     * thread = pthread_self();
+     * pthread_getaffinity_np(thread, sizeof(thrd_cpuset), &thrd_cpuset);
+     */
     /* If pid=0, return mask of calling process */
-    //sched_getaffinity(0, sizeof(thrd_cpuset), &thrd_cpuset);
     sched_getaffinity(tid, sizeof(thrd_cpuset), &thrd_cpuset);
     thrd_cpucount = CPU_COUNT(&thrd_cpuset);
 
+    /* Get string-ify version of cpuset mask */
     cpuaff2str(thrd_cpuset, &thrd_str);
 
     if (VERBOSE) {
-        //show_affinity(omp_tid, thrd_cpuset);
-        printf ("(%0d/%0d) PID:%6d TID:%6d OMP_TID:%3d NCPU:%5d  CPUAff: %s\n",
-                rank, size, pid, tid, omp_tid, thrd_cpucount, thrd_str);
+        printf ("(%0d/%0d) PID:%6d TID:%6d OMP_TID:%3d pNCPU:%5d  pCPUAff: %s  tNCPU:%5d  tCPUAff: %s\n",
+                rank, size, pid, tid, omp_tid, proc_cpucount, proc_str, thrd_cpucount, thrd_str);
     } else {
-        printf ("(%0d/%0d) %6d %6d %3d (%d)CPUAff: %s\n",
-                rank, size, pid, tid, omp_tid, thrd_cpucount, thrd_str);
+        printf ("(%0d/%0d) %6d %6d %3d (%d)pCPUAff: %s  (%d)tCPUAff: %s\n",
+                rank, size, pid, tid, omp_tid, proc_cpucount, proc_str, thrd_cpucount, thrd_str);
     }
 
     fflush(stdout);
@@ -166,6 +178,9 @@ int main (int argc, char ** argv)
         free(thrd_str);
     }
 }
+    if (NULL != proc_str) {
+        free(proc_str);
+    }
 
     MPI_Finalize();
 
