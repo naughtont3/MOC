@@ -11,8 +11,9 @@
 
 bin_PROGRAMS = simple_test
 
-check_PROGRAMS = 	\
-	hello-omp 		\
+check_PROGRAMS = 		\
+	hello-omp 			\
+	tst-show-affinity	\
 	tst-thrdbind
 
 TESTS = \
@@ -22,11 +23,14 @@ NPROCS ?= 2
 LOG_COMPILER = $(TEST_RUNNER)
 
 simple_test_SOURCES = simple_test.c
-simple_test_LDADD = ../src/libmoc.la
+simple_test_LDADD = $(top_srcdir)/src/libmoc.la
 
 hello_omp_SOURCES = hello-omp.c
 hello_omp_LDFLAGS = -fopenmp
-hello_omp_LDADD   = 
 
 tst_thrdbind_SOURCES = tst-thrdbind.c
-tst_thrdbind_LDADD   = -lpthread
+tst_thrdbind_LDFLAGS = -lpthread
+
+tst_show_affinity_SOURCES = tst-show-affinity.c
+tst_show_affinity_CFLAGS = -fopenmp
+tst_show_affinity_LDFLAGS = -fopenmp
