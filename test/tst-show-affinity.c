@@ -165,11 +165,21 @@ int main (int argc, char ** argv)
     cpuaff2str(thrd_cpuset, &thrd_str);
 
     if (VERBOSE) {
+      #if 0 /* Show proc_cpuset info */
         printf ("(%0d/%0d) PID:%6d TID:%6d OMP_TID:%3d pNCPU:%5d  pCPUAff: %s  tNCPU:%5d  tCPUAff: %s\n",
                 rank, size, pid, tid, omp_tid, proc_cpucount, proc_str, thrd_cpucount, thrd_str);
+      #else
+        printf ("(%0d/%0d) PID:%6d TID:%6d OMP_TID:%3d tNCPU:%5d  tCPUAff: %s\n",
+                rank, size, pid, tid, omp_tid, thrd_cpucount, thrd_str);
+      #endif
     } else {
+      #if 0 /* Show proc_cpuset info */
         printf ("(%0d/%0d) %6d %6d %3d (%d)pCPUAff: %s  (%d)tCPUAff: %s\n",
                 rank, size, pid, tid, omp_tid, proc_cpucount, proc_str, thrd_cpucount, thrd_str);
+      #else
+        printf ("(%0d/%0d) %6d %6d %3d (%d)tCPUAff: %s\n",
+                rank, size, pid, tid, omp_tid, thrd_cpucount, thrd_str);
+      #endif
     }
 
     fflush(stdout);
